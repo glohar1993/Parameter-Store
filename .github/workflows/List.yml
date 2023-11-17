@@ -9,7 +9,7 @@ on:
 
 jobs:
   list-and-generate-table:
-    runs-on: ubuntu-latest
+    runs-on: POC
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
