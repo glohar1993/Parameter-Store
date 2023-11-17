@@ -10,7 +10,7 @@ on:
 
 jobs:
   backup:
-    runs-on: POC
+    runs-on: POC  # Ensure this is a valid runner
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -23,8 +23,10 @@ jobs:
 
     - name: Invoke Backup Lambda Function
       run: |
+        payload=$(echo -n '{"parameterName": "${{ github.event.inputs.parameterName }}"}' | base64)
         aws lambda invoke --function-name backup_lambda \
-                          --payload '{"parameterName": "${{ github.event.inputs.parameterName }}"}' \
+                          --cli-binary-format raw-in-base64-out \
+                          --payload $payload \
                           response.json
 
     - name: Show output
