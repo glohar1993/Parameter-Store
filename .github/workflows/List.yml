@@ -1,22 +1,15 @@
-name: AWS SSM and S3 Operations
+name: List S3 Parameters and Generate HTML Table
 
 on:
   workflow_dispatch:
     inputs:
-      actionType:
-        description: 'Select Action (Backup or Restore)'
-        required: true
-        type: choice
-        options:
-        - Backup
-        - Restore
       bucketName:
-        description: 'S3 Bucket Name (required for Restore)'
-        required: false
+        description: 'S3 Bucket Name'
+        required: true
 
 jobs:
-  process:
-    runs-on: POC
+  list-and-generate-table:
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -24,17 +17,12 @@ jobs:
     - name: Set up AWS CLI
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-        aws-region: us-east-1
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: List SSM Parameters (for Backup)
-      if: ${{ github.event.inputs.actionType == 'Backup' }}
+    - name: List Objects and Generate HTML Table
       run: |
-        echo "Listing SSM Parameters..."
-        aws ssm describe-parameters --output table
-
-    - name: List S3 Objects (for Restore)
-      if: ${{ github.event.inputs.actionType == 'Restore' }}
-      run: |
-        echo "Listing S3 Objects in bucket: ${{ github.event.inputs.bucketName }}"
-        aws s3 ls s3://${{ github.event.inputs.bucketName }} --output table
+        mkdir s3_contents
+        aws s3 sync s3://${{ github.event.inputs.bucketName }} s3_contents
+        python3 list.py
