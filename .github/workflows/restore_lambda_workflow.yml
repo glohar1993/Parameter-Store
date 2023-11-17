@@ -22,9 +22,10 @@ jobs:
 
     - name: Invoke Restore Lambda Function
       run: |
+        payload="{\"backupFile\": \"${{ github.event.inputs.backupFile }}\"}"
         aws lambda invoke --function-name restore_lambda \
                           --cli-binary-format raw-in-base64-out \
-                          --payload "{\"backupFile\": \"${{ github.event.inputs.backupFile }}\"}" \
+                          --payload "$payload" \
                           response.json
 
     - name: Show output
