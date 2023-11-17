@@ -1,0 +1,31 @@
+name: AWS Lambda Backup
+
+on:
+  workflow_dispatch:
+    inputs:
+      parameterName:
+        description: 'Parameter Name (leave blank for all parameters)'
+        required: false
+        default: '*'
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Invoke Backup Lambda Function
+      run: |
+        aws lambda invoke --function-name backup_lambda \
+                          --payload '{"parameterName": "${{ github.event.inputs.parameterName }}"}' \
+                          response.json
+
+    - name: Show output
+      run: cat response.json
