@@ -5,8 +5,23 @@ from datetime import datetime
 # HTML table initialization
 html_table = """
 <html>
+<head>
+<title>Parameter Backup Details</title>
+<style>
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th, td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: left;
+}
+</style>
+</head>
 <body>
-<table border='1'>
+<h2>Parameter Backup Details</h2>
+<table>
 <tr>
     <th>Parameter Name</th>
     <th>File Name</th>
