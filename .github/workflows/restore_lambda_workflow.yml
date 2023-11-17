@@ -9,7 +9,7 @@ on:
 
 jobs:
   restore:
-    runs-on: POC # Replace with your actual runner environment if different
+    runs-on: POC  # Replace with your actual runner environment if different
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
