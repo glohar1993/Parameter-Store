@@ -1,14 +1,15 @@
-name: AWS Lambda Restore
+name: AWS Lambda Backup
 
 on:
   workflow_dispatch:
     inputs:
-      backupFile:
-        description: 'Backup File Name'
-        required: true
+      parameterName:
+        description: 'Parameter Name (leave blank for all parameters)'
+        required: false
+        default: '*'
 
 jobs:
-  restore:
+  backup:
     runs-on: POC  # Replace with your actual runner environment if different
     steps:
     - name: Checkout repository
@@ -20,11 +21,11 @@ jobs:
         role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
         aws-region: us-east-1
 
-    - name: Invoke Restore Lambda Function
+    - name: Invoke Backup Lambda Function
       run: |
-        aws lambda invoke --function-name restore_lambda \
+        aws lambda invoke --function-name backup_lambda \
                           --cli-binary-format raw-in-base64-out \
-                          --payload "{\"backupFile\": \"${{ github.event.inputs.backupFile }}\"}" \
+                          --payload "{\"parameterName\": \"${{ github.event.inputs.parameterName }}\"}" \
                           response.json
 
     - name: Show output
